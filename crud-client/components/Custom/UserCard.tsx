@@ -11,7 +11,7 @@ import {
 import { iUser } from "@/types/UserType"
 import Link from "next/link"
 import { useRouter } from 'next/navigation'
-import React from "react"
+import UpdateUserDialog from "./UpdateUserDialog"
 
 interface iUserCardProps {
   user: iUser
@@ -31,7 +31,7 @@ const UserCard = ({ user }: iUserCardProps) => {
       router.refresh();
     }
   }
-  
+
   return (
     <div>
       <Card className="pt-0">
@@ -46,7 +46,7 @@ const UserCard = ({ user }: iUserCardProps) => {
           <Link className="w-full" href={`/users/${user._id}`}>
             <Button className="cursor-pointer bg-green-400">View Details</Button>
           </Link>
-          <Button className="cursor-pointer bg-blue-400">Edit</Button>
+          <UpdateUserDialog user={user}></UpdateUserDialog>
           <Button variant='destructive' 
           onClick={() => handleDeleteUser(_id)}
           className="cursor-pointer">Delete User</Button>
