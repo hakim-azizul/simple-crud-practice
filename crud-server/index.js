@@ -39,11 +39,11 @@ app.get("/users", async (req, res) => {
   res.send(allUsers);
 });
 
-app.get('/users/:id', async(req, res) =>{
-    const id = req.params.id;
-    const query = {_id: new ObjectId(id)}
-    const result = await users.findOne(query);
-    res.send(result);
+app.get("/users/:id", async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: new ObjectId(id) };
+  const result = await users.findOne(query);
+  res.send(result);
 });
 
 app.post("/users", async (req, res) => {
@@ -54,12 +54,28 @@ app.post("/users", async (req, res) => {
   console.log("adding new user:", newUser);
 });
 
-app.delete('/users/:id', async(req, res)=>{
-  const {id} = req.params;
-  const query = {_id: new ObjectId(id) };
-  const result = await users.deleteOne(query)
+app.delete("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  const query = { _id: new ObjectId(id) };
+  const result = await users.deleteOne(query);
   res.send(result);
-})
+});
+
+app.patch("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  const updatedUser = req.body;
+  // console.log('upgating user with id', id, 'with data', updatedUser);
+  const filter = { _id: new ObjectId(id) };
+  const options = { upsert: true };
+  const updateDoc = {
+    $set: {
+      name: updatedUser.name,
+      email: updatedUser.email,
+    },
+  };
+  const result = await users.updateOne(filter, updateDoc, options);
+  res.send(result);
+});
 
 app.listen(PORT, () => {
   console.log(`App is running on port ${PORT}`);

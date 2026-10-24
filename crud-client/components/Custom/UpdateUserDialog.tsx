@@ -15,25 +15,46 @@ import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { iUser } from "@/types/UserType"
+import { useRouter } from "next/navigation"
 
-interface iUpdateUserDialogProps{
-    user: iUser
+interface iUpdateUserDialogProps {
+  user: iUser
 }
 
-const UpdateUserDialog = ({user}:iUpdateUserDialogProps) => {
+const UpdateUserDialog = ({ user }: iUpdateUserDialogProps) => {
+  const router = useRouter()
+  const handleUpdateUser = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const updatedUser = Object.fromEntries(formData.entries())
+
+    console.log("updated user", updatedUser)
+    const res = await fetch(`http://localhost:5000/users/${user._id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedUser),
+    })
+    const result = await res.json()
+    console.log("result from server", result)
+    if (result.modifiedCount > 0) {
+      router.refresh()
+      alert(`${user.name} updated to: ${updatedUser.name}`)
+    }
+  }
+
   return (
     <div>
       <Dialog>
-        <form>
-          <DialogTrigger
-            render={<Button variant="outline">Update</Button>}
-          />
-          <DialogContent className="sm:max-w-sm">
+        <DialogTrigger render={<Button variant="outline">Update</Button>} />
+        <DialogContent className="sm:max-w-sm">
+          <form onSubmit={handleUpdateUser}>
             <DialogHeader>
               <DialogTitle>Edit User</DialogTitle>
               <DialogDescription>
-                Make changes to your user profile here. Click save when you&apos;re
-                done.
+                Make changes to your user profile here. Click save when
+                you&apos;re done.
               </DialogDescription>
             </DialogHeader>
             <FieldGroup>
@@ -53,10 +74,12 @@ const UpdateUserDialog = ({user}:iUpdateUserDialogProps) => {
             </FieldGroup>
             <DialogFooter>
               <DialogClose render={<Button variant="outline">Cancel</Button>} />
-              <Button type="submit">Save changes</Button>
+              <DialogClose
+                render={<Button type="submit">Save changes</Button>}
+              />
             </DialogFooter>
-          </DialogContent>
-        </form>
+          </form>
+        </DialogContent>
       </Dialog>
     </div>
   )
