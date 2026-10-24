@@ -10,8 +10,9 @@ const userDetailPage = async({params}: iUserDetailPage ) => {
     const user: Promise<iUser> = res.json();
 
     return (
-        <div>
+        <div className='container mx-auto p-20'>
             <h2>User deatails of: {(await user).name} </h2>
+            <h2>Contact: {(await user).email}</h2>
         </div>
     );
 };

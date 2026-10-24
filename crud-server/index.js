@@ -54,6 +54,13 @@ app.post("/users", async (req, res) => {
   console.log("adding new user:", newUser);
 });
 
+app.delete('/users/:id', async(req, res)=>{
+  const {id} = req.params;
+  const query = {_id: new ObjectId(id) };
+  const result = await users.deleteOne(query)
+  res.send(result);
+})
+
 app.listen(PORT, () => {
   console.log(`App is running on port ${PORT}`);
 });
